@@ -2,28 +2,12 @@ import sublime_plugin
 from threading import Thread
 import time
 from time import sleep
-
+import json
 
 try:
     import urllib.request as urllib2
 except:
     import urllib2
-
-    # def handle_action(self):
-    # url = 'http://localhost:5000/stream/ZIBUWWLFTOBCNSYD/event'
-    # data = json.dumps(eventJson)
-    # binaryData = data.encode('utf8')
-    # req = urllib2.Request(url, binaryData, {'Content-Type': 'application/json'})
-    # req.add_header("Authorization", "GHbuKIiIgbQ6LBDr0uu26gW24ePbQA==")
-
-    # response = urllib2.urlopen(req)
-    # the_page = response.read()
-    # {
-    # "streamid": "ZIBUWWLFTOBCNSYD",
-    # "writeToken": "GHbuKIiIgbQ6LBDr0uu26gW24ePbQA==",
-    # "readToken": "b311N0ePqIJJqgxwUVNaiOzYvs4fIA==",
-    # "_id": ObjectId("53a01f64a23308064a2ab5db")
-    # }
 
 
 class QuantifiedDevListener(sublime_plugin.EventListener):
@@ -92,9 +76,10 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
         self.persist(activityEvent)
 
     def createActivityEvent(self, timeDurationInMillis):
+        streamId = "ZIBUWWLFTOBCNSYD"
         event = {
             "dateTime": "2014-06-30T14:50:39.000Z",
-            "streamid": "ZIBUWWLFTOBCNSYD",
+            "streamid": streamId,
             "location": {
                 "lat": 51.5,
                 "long": -0.13
@@ -117,9 +102,18 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
         return event
 
     def persist(self, event):
-        writeToken = "write_token"
+        streamId = "ZIBUWWLFTOBCNSYD"
+        writeToken = "GHbuKIiIgbQ6LBDr0uu26gW24ePbQA=="
         print("event to be sent to server : %s " % event)
-        # Configuration.repository.insert(event, writeToken)
+        self.send_event_to_platform(event, streamId, writeToken)
+
+    def send_event_to_platform(self, event, streamId, writeToken):
+        url = "http://localhost:5000/stream/%(streamId)s/event" % locals()
+        data = json.dumps(event)
+        utfEncodedData = data.encode('utf8')
+        req = urllib2.Request(url, utfEncodedData, {'Content-Type': 'application/json', 'Authorization': writeToken})
+        response = urllib2.urlopen(req)
+        result = response.read()
 
     def inactivityDuration(self):
         return time.time() - self.activeSessionEndTime
