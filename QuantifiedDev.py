@@ -105,15 +105,19 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
         streamId = "ZIBUWWLFTOBCNSYD"
         writeToken = "GHbuKIiIgbQ6LBDr0uu26gW24ePbQA=="
         print("event to be sent to server : %s " % event)
-        self.send_event_to_platform(event, streamId, writeToken)
+        thread = Thread(target=self.send_event_to_platform, args=(event, streamId, writeToken))
+        thread.start()
 
     def send_event_to_platform(self, event, streamId, writeToken):
+        print("Started: sending")
+        time.sleep(10)
         url = "http://localhost:5000/stream/%(streamId)s/event" % locals()
         data = json.dumps(event)
         utfEncodedData = data.encode('utf8')
         req = urllib2.Request(url, utfEncodedData, {'Content-Type': 'application/json', 'Authorization': writeToken})
         response = urllib2.urlopen(req)
         result = response.read()
+        print("Sent successfully")
 
     def inactivityDuration(self):
         return time.time() - self.activeSessionEndTime
