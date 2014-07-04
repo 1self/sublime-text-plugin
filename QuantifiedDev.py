@@ -11,75 +11,76 @@ except:
 
 
 class QuantifiedDevListener(sublime_plugin.EventListener):
-    isUserActive = False
-    activeSessionStartTime = time.time()
-    activeSessionEndTime = activeSessionStartTime
-    inactiveSessionStartTime = time.time()
-    inactiveSessionEndTime = inactiveSessionStartTime
+    is_user_active = False
+    active_session_start_time = time.time()
+    active_session_end_time = active_session_start_time
+    inactive_session_start_time = time.time()
+    inactive_session_end_time = inactive_session_start_time
     THRESHOLD_INACTIVITY_DURATION = 30
 
     def on_post_save(self, view):
-        self.handleEvent()
+        self.handle_event()
 
     def on_activated(self, view):
-        self.handleEvent()
+        self.handle_event()
 
     def on_modified(self, view):
-        self.handleEvent()
+        self.handle_event()
 
-    def sublimeActivityDetectorThread(self):
+    def sublime_activity_detector_thread(self):
         while True:
             print(
-                "isUserActive : %s inactivityDuration : %s sec" % (self.isUserActive, round(self.inactivityDuration())))
-            if self.isUserActive:
-                if self.inactivityDuration() >= self.THRESHOLD_INACTIVITY_DURATION:
-                    self.inactiveSessionStartTime = self.activeSessionEndTime
-                    self.logEventQD(self.activityDuration())
-                    self.markUserAsInactive()
+                "isUserActive : %s inactivityDuration : %s sec" % (
+                    self.is_user_active, self.inactivity_duration()))
+            if self.is_user_active:
+                if self.inactivity_duration() >= self.THRESHOLD_INACTIVITY_DURATION:
+                    self.inactive_session_start_time = self.active_session_end_time
+                    self.log_event_qd(self.activity_duration())
+                    self.mark_user_as_inactive()
                     print(
                         "User is inactive now isUserActive : %s and activityDuration was : %s sec" % (
-                            self.isUserActive, round(self.activityDuration())))
+                            self.is_user_active, self.activity_duration()))
             sleep(self.THRESHOLD_INACTIVITY_DURATION)
 
     def __init__(self):
-        thread = Thread(target=self.sublimeActivityDetectorThread)
+        thread = Thread(target=self.sublime_activity_detector_thread)
         thread.start()
 
-    def handleEvent(self):
-        if not self.isUserActive:
-            self.startCountingActivity()
-            self.markUserAsActive()
-        elif self.inactivityDuration() >= self.THRESHOLD_INACTIVITY_DURATION:
-            self.handleIdeaWakeupEvent()
-        self.updateActivityEndCounter()
-        self.printEverything()
+    def handle_event(self):
+        if not self.is_user_active:
+            self.start_counting_activity()
+            self.mark_user_as_active()
+        elif self.inactivity_duration() >= self.THRESHOLD_INACTIVITY_DURATION:
+            self.handle_sublime_wakeup_event()
+        self.update_activity_end_counter()
+        self.print_everything()
 
-    def printEverything(self):
-        print("isUserActive : %s activeDuration: %s sec" % (self.isUserActive, round(self.activityDuration())))
+    def print_everything(self):
+        print("isUserActive : %s activeDuration: %s sec" % (self.is_user_active, self.activity_duration()))
 
-    def startCountingActivity(self):
-        self.activeSessionStartTime = time.time()
-        self.inactiveSessionEndTime = self.activeSessionStartTime
+    def start_counting_activity(self):
+        self.active_session_start_time = time.time()
+        self.inactive_session_end_time = self.active_session_start_time
 
-    def markUserAsActive(self):
-        self.isUserActive = True
+    def mark_user_as_active(self):
+        self.is_user_active = True
 
-    def handleIdeaWakeupEvent(self):
-        self.logEventQD(self.activityDuration())
-        self.startCountingActivity()
+    def handle_sublime_wakeup_event(self):
+        self.log_event_qd(self.activity_duration())
+        self.start_counting_activity()
 
-    def updateActivityEndCounter(self):
-        self.activeSessionEndTime = time.time()
+    def update_activity_end_counter(self):
+        self.active_session_end_time = time.time()
 
-    def logEventQD(self, timeDurationInMillis):
-        activityEvent = self.createActivityEvent(timeDurationInMillis)
-        self.persist(activityEvent)
+    def log_event_qd(self, time_duration_in_millis):
+        activity_event = self.create_activity_event(time_duration_in_millis)
+        self.persist(activity_event)
 
-    def createActivityEvent(self, timeDurationInMillis):
-        streamId = "ZIBUWWLFTOBCNSYD"
+    def create_activity_event(self, time_duration_in_millis):
+        stream_id = "ZIBUWWLFTOBCNSYD"
         event = {
             "dateTime": "2014-06-30T14:50:39.000Z",
-            "streamid": streamId,
+            "streamid": stream_id,
             "location": {
                 "lat": 51.5,
                 "long": -0.13
@@ -96,37 +97,34 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
             "properties": {
                 "Environment": "Sublime Text 3",
                 "isUserActive": True,
-                "duration": timeDurationInMillis
+                "duration": time_duration_in_millis
             }
         }
         return event
 
     def persist(self, event):
-        streamId = "ZIBUWWLFTOBCNSYD"
-        writeToken = "GHbuKIiIgbQ6LBDr0uu26gW24ePbQA=="
+        stream_id = "ZIBUWWLFTOBCNSYD"
+        write_token = "GHbuKIiIgbQ6LBDr0uu26gW24ePbQA=="
         print("event to be sent to server : %s " % event)
-        thread = Thread(target=self.send_event_to_platform, args=(event, streamId, writeToken))
+        thread = Thread(target=self.send_event_to_platform, args=(event, stream_id, write_token))
         thread.start()
 
-    def send_event_to_platform(self, event, streamId, writeToken):
+    def send_event_to_platform(self, event, stream_id, write_token):
         print("Started: sending")
-        url = "http://localhost:5000/stream/%(streamId)s/event" % locals()
+        time.sleep(10)
+        url = "http://localhost:5000/stream/%(stream_id)s/event" % locals()
         data = json.dumps(event)
-        utfEncodedData = data.encode('utf8')
-        req = urllib2.Request(url, utfEncodedData, {'Content-Type': 'application/json', 'Authorization': writeToken})
-        try:
-            response = urllib2.urlopen(req)
-            result = response.read()
-            print("Sent successfully")
-        except:
-            print("failed sending event to platform")
-            pass
+        utf_encoded_data = data.encode('utf8')
+        req = urllib2.Request(url, utf_encoded_data, {'Content-Type': 'application/json', 'Authorization': write_token})
+        response = urllib2.urlopen(req)
+        result = response.read()
+        print("Sent successfully")
 
-    def inactivityDuration(self):
-        return time.time() - self.activeSessionEndTime
+    def inactivity_duration(self):
+        return round(time.time() - self.active_session_end_time)
 
-    def activityDuration(self):
-        return self.activeSessionEndTime - self.activeSessionStartTime
+    def activity_duration(self):
+        return round(self.active_session_end_time - self.active_session_start_time)
 
-    def markUserAsInactive(self):
-        self.isUserActive = False
+    def mark_user_as_inactive(self):
+        self.is_user_active = False
