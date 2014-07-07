@@ -9,6 +9,7 @@ try:
 except:
     import urllib2
 
+QD_URL = "http://localhost:5000/"
 SETTINGS = {}
 SETTINGS_FILE = "QuantifiedDev.sublime-settings"
 
@@ -24,7 +25,6 @@ def after_loaded():
 
 def get_stream_id_if_not_present():
     global SETTINGS
-    print("Sent: SOMETHING")
     print('Initializing QuantifiedDev plugin')
     SETTINGS = sublime.load_settings(SETTINGS_FILE)
 
@@ -33,7 +33,8 @@ def get_stream_id_if_not_present():
         return True
     else:
         event = {}
-        url = "http://localhost:5000/stream"
+        qd_url = QD_URL
+        url = "%(qd_url)s/stream" % locals()
         data = json.dumps(event)
         utf_encoded_data = data.encode('utf8')
         req = urllib2.Request(url, utf_encoded_data, {'Content-Type': 'application/json'})
@@ -150,7 +151,8 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
 
     def send_event_to_platform(self, event, stream_id, write_token):
         print("Started: sending")
-        url = "http://localhost:5000/stream/%(stream_id)s/event" % locals()
+        qd_url = QD_URL
+        url = "%(qd_url)s/stream/%(stream_id)s/event" % locals()
         data = json.dumps(event)
         utf_encoded_data = data.encode('utf8')
         req = urllib2.Request(url, utf_encoded_data, {'Content-Type': 'application/json', 'Authorization': write_token})
