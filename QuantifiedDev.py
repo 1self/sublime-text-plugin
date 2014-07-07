@@ -1,4 +1,4 @@
-import sublime_plugin
+import sublime_plugin, sublime
 from threading import Thread
 import time
 from time import sleep
@@ -8,6 +8,45 @@ try:
     import urllib.request as urllib2
 except:
     import urllib2
+
+SETTINGS = {}
+SETTINGS_FILE = "QuantifiedDev.sublime-settings"
+
+def plugin_loaded():
+    global SETTINGS
+    SETTINGS = sublime.load_settings(SETTINGS_FILE)
+    after_loaded()
+
+
+def after_loaded():
+    get_stream_id_if_not_present()
+
+
+def get_stream_id_if_not_present():
+    global SETTINGS
+    print("Sent: SOMETHING")
+    print('Initializing QuantifiedDev plugin')
+    SETTINGS = sublime.load_settings(SETTINGS_FILE)
+
+    if SETTINGS.get('streamId'):
+
+        return True
+    else:
+        event = {}
+        url = "http://localhost:5000/stream"
+        data = json.dumps(event)
+        utf_encoded_data = data.encode('utf8')
+        req = urllib2.Request(url, utf_encoded_data, {'Content-Type': 'application/json'})
+        response = urllib2.urlopen(req)
+        result = response.read()
+        print(result)
+
+        json_result = json.loads(result.decode('utf8'))
+
+        SETTINGS.set("streamId", str(json_result['streamid']))
+        SETTINGS.set("readToken", str(json_result['readToken']))  
+        SETTINGS.set("writeToken", str(json_result['writeToken']))  
+        sublime.save_settings(SETTINGS_FILE)
 
 
 class QuantifiedDevListener(sublime_plugin.EventListener):
@@ -77,7 +116,7 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
         self.persist(activity_event)
 
     def create_activity_event(self, time_duration_in_millis):
-        stream_id = "ZIBUWWLFTOBCNSYD"
+        stream_id = SETTINGS.get("streamId")
         event = {
             "dateTime": "2014-06-30T14:50:39.000Z",
             "streamid": stream_id,
@@ -103,15 +142,14 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
         return event
 
     def persist(self, event):
-        stream_id = "ZIBUWWLFTOBCNSYD"
-        write_token = "GHbuKIiIgbQ6LBDr0uu26gW24ePbQA=="
+        stream_id = SETTINGS.get("streamId")
+        write_token = SETTINGS.get("writeToken")
         print("event to be sent to server : %s " % event)
         thread = Thread(target=self.send_event_to_platform, args=(event, stream_id, write_token))
         thread.start()
 
     def send_event_to_platform(self, event, stream_id, write_token):
         print("Started: sending")
-        time.sleep(10)
         url = "http://localhost:5000/stream/%(stream_id)s/event" % locals()
         data = json.dumps(event)
         utf_encoded_data = data.encode('utf8')
