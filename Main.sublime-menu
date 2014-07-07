@@ -1,0 +1,17 @@
+[
+    {
+        "caption": "Tools",
+        "id": "tools",
+        "children":
+        [
+            {
+                "caption": "QuantifiedDev",
+                "id": "quantifieddev-settings",
+                "children":
+                [
+                 { "command": "go_to_quantified_dev_dashboard", "caption": "Go to QuantifiedDev Dashboard" }
+                ]
+            }
+        ]
+    }
+]
