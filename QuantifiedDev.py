@@ -3,15 +3,18 @@ from threading import Thread
 import time
 from time import sleep
 import json
+import copy
+import collections
 
 try:
     import urllib.request as urllib2
 except:
     import urllib2
 
-QD_URL = "http://localhost:5000/"
+QD_URL = "http://localhost:5000"
 SETTINGS = {}
 SETTINGS_FILE = "QuantifiedDev.sublime-settings"
+event_persister = collections.deque()
 
 def plugin_loaded():
     global SETTINGS
@@ -29,7 +32,6 @@ def get_stream_id_if_not_present():
     SETTINGS = sublime.load_settings(SETTINGS_FILE)
 
     if SETTINGS.get('streamId'):
-
         return True
     else:
         event = {}
@@ -85,6 +87,9 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
     def __init__(self):
         thread = Thread(target=self.sublime_activity_detector_thread)
         thread.start()
+        thread = Thread(target=self.send_events_from_queue)
+        thread.start()
+
 
     def handle_event(self):
         if not self.is_user_active:
@@ -145,12 +150,35 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
     def persist(self, event):
         stream_id = SETTINGS.get("streamId")
         write_token = SETTINGS.get("writeToken")
-        print("event to be sent to server : %s " % event)
-        thread = Thread(target=self.send_event_to_platform, args=(event, stream_id, write_token))
-        thread.start()
+        tuple = (event, stream_id, write_token)
+        event_persister.append(tuple)
+
+    def send_events_from_queue(self):
+        while True:
+            event_persister_copy = copy.deepcopy(event_persister)
+            print("Event Queue:")
+            print(event_persister)
+            if event_persister_copy:
+                print("Event present in queue")
+                event_tuple = event_persister_copy.popleft()
+                event = event_tuple[0]
+                stream_id = event_tuple[1]
+                write_token = event_tuple[2]
+                try:
+                    print("Trying to send event to platform")
+                    self.send_event_to_platform(event, stream_id, write_token)
+                    event_persister.popleft()
+                    print("Event sent successfully")
+                    print(event)
+                except:
+                    sleep(15)
+                    print("Event not sent due to some problem")
+            else:
+                print("No event found in queue.. sleeping for 1 minute")
+                sleep(30)
+
 
     def send_event_to_platform(self, event, stream_id, write_token):
-        print("Started: sending")
         qd_url = QD_URL
         url = "%(qd_url)s/stream/%(stream_id)s/event" % locals()
         data = json.dumps(event)
@@ -158,7 +186,6 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
         req = urllib2.Request(url, utf_encoded_data, {'Content-Type': 'application/json', 'Authorization': write_token})
         response = urllib2.urlopen(req)
         result = response.read()
-        print("Sent successfully")
 
     def inactivity_duration(self):
         return round(time.time() - self.active_session_end_time)
