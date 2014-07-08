@@ -1,7 +1,7 @@
 import sublime, sublime_plugin, webbrowser
 
 
-QD_URL = "http://localhost:5000/"
+QD_URL = "http://localhost:5000"
 
 class GoToQuantifiedDevDashboardCommand(sublime_plugin.TextCommand):
    def run(self,edit):
@@ -12,5 +12,5 @@ class GoToQuantifiedDevDashboardCommand(sublime_plugin.TextCommand):
         read_token = SETTINGS.get("readToken")
         qd_url = QD_URL
 
-        url = "%(qd_url)sdashboard?streamId=%(stream_id)s&readToken=%(read_token)s" % locals()  
+        url = "%(qd_url)s/dashboard?streamId=%(stream_id)s&readToken=%(read_token)s" % locals()
         webbrowser.open_new_tab(url)
