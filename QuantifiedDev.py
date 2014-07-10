@@ -16,46 +16,41 @@ SETTINGS = {}
 SETTINGS_FILE = "QuantifiedDev.sublime-settings"
 event_persister = collections.deque()
 
-
-class QuantifiedDevPlugin:
-    def __init__(self):
-        print("Plugin loaded")
-        global SETTINGS
-        SETTINGS = sublime.load_settings(SETTINGS_FILE)
-        self.after_loaded()
+def plugin_loaded():
+    global SETTINGS
+    SETTINGS = sublime.load_settings(SETTINGS_FILE)
+    after_loaded()
 
 
-    def after_loaded(self):
-        print("After loaded")
-        self.get_stream_id_if_not_present()
+def after_loaded():
+    get_stream_id_if_not_present()
 
 
-    def get_stream_id_if_not_present(self):
-        global SETTINGS
-        print('Initializing QuantifiedDev plugin')
-        SETTINGS = sublime.load_settings(SETTINGS_FILE)
+def get_stream_id_if_not_present():
+    global SETTINGS
+    print('Initializing QuantifiedDev plugin')
+    SETTINGS = sublime.load_settings(SETTINGS_FILE)
 
-        if SETTINGS.get('streamId'):
-            return True
-        else:
-            event = {}
-            qd_url = QD_URL
-            url = "%(qd_url)s/stream" % locals()
-            data = json.dumps(event)
-            utf_encoded_data = data.encode('utf8')
-            req = urllib2.Request(url, utf_encoded_data, {'Content-Type': 'application/json'})
-            response = urllib2.urlopen(req)
-            result = response.read()
-            print(result)
+    if SETTINGS.get('streamId'):
+        return True
+    else:
+        event = {}
+        qd_url = QD_URL
+        url = "%(qd_url)s/stream" % locals()
+        data = json.dumps(event)
+        utf_encoded_data = data.encode('utf8')
+        req = urllib2.Request(url, utf_encoded_data, {'Content-Type': 'application/json'})
+        response = urllib2.urlopen(req)
+        result = response.read()
+        print(result)
 
-            json_result = json.loads(result.decode('utf8'))
+        json_result = json.loads(result.decode('utf8'))
 
-            SETTINGS.set("streamId", str(json_result['streamid']))
-            SETTINGS.set("readToken", str(json_result['readToken']))  
-            SETTINGS.set("writeToken", str(json_result['writeToken']))  
-            sublime.save_settings(SETTINGS_FILE)
+        SETTINGS.set("streamId", str(json_result['streamid']))
+        SETTINGS.set("readToken", str(json_result['readToken']))  
+        SETTINGS.set("writeToken", str(json_result['writeToken']))  
+        sublime.save_settings(SETTINGS_FILE)
 
-QuantifiedDevPlugin()
 
 class QuantifiedDevListener(sublime_plugin.EventListener):
     is_user_active = False
