@@ -17,6 +17,7 @@ SETTINGS_FILE = "QuantifiedDev.sublime-settings"
 event_persister = collections.deque()
 
 def plugin_loaded():
+    print('Initializing QuantifiedDev plugin')
     global SETTINGS
     SETTINGS = sublime.load_settings(SETTINGS_FILE)
     after_loaded()
@@ -27,9 +28,6 @@ def after_loaded():
 
 
 def get_stream_id_if_not_present():
-    global SETTINGS
-    print('Initializing QuantifiedDev plugin')
-    SETTINGS = sublime.load_settings(SETTINGS_FILE)
 
     if SETTINGS.get('streamId'):
         return True
