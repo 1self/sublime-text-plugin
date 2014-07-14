@@ -11,7 +11,7 @@ try:
 except:
     import urllib2
 
-QD_URL = "http://localhost:5000"
+QD_URL = "http://app.quantifieddev.org"
 SETTINGS = {}
 SETTINGS_FILE = "QuantifiedDev.sublime-settings"
 event_persister = collections.deque()
@@ -40,7 +40,7 @@ def get_stream_id_if_not_present():
         req = urllib2.Request(url, utf_encoded_data, {'Content-Type': 'application/json'})
         response = urllib2.urlopen(req)
         result = response.read()
-        print(result)
+        #print(result)
 
         json_result = json.loads(result.decode('utf8'))
 
@@ -56,7 +56,7 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
     active_session_end_time = active_session_start_time
     inactive_session_start_time = time.time()
     inactive_session_end_time = inactive_session_start_time
-    THRESHOLD_INACTIVITY_DURATION = 30
+    THRESHOLD_INACTIVITY_DURATION = 60
 
     def on_post_save(self, view):
         self.handle_event()
@@ -77,9 +77,9 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
                     self.inactive_session_start_time = self.active_session_end_time
                     self.log_event_qd(self.activity_duration())
                     self.mark_user_as_inactive()
-                    print(
-                        "User is inactive now isUserActive : %s and activityDuration was : %s sec" % (
-                            self.is_user_active, self.activity_duration()))
+                    # print(
+                    #     "User is inactive now isUserActive : %s and activityDuration was : %s sec" % (
+                    #         self.is_user_active, self.activity_duration()))
             sleep(self.THRESHOLD_INACTIVITY_DURATION)
 
     def __init__(self):
@@ -96,10 +96,10 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
         elif self.inactivity_duration() >= self.THRESHOLD_INACTIVITY_DURATION:
             self.handle_sublime_wakeup_event()
         self.update_activity_end_counter()
-        self.print_everything()
+        # self.print_everything()
 
-    def print_everything(self):
-        print("isUserActive : %s activeDuration: %s sec" % (self.is_user_active, self.activity_duration()))
+    # def print_everything(self):
+    #     print("isUserActive : %s activeDuration: %s sec" % (self.is_user_active, self.activity_duration()))
 
     def start_counting_activity(self):
         self.active_session_start_time = time.time()
@@ -115,7 +115,8 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
     def update_activity_end_counter(self):
         self.active_session_end_time = time.time()
 
-    def log_event_qd(self, time_duration_in_millis):
+    def log_event_qd(self, time_duration_in_seconds):
+        time_duration_in_millis = time_duration_in_seconds * 1000
         activity_event = self.create_activity_event(time_duration_in_millis)
         self.persist(activity_event)
 
@@ -154,25 +155,25 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
     def send_events_from_queue(self):
         while True:
             event_persister_copy = copy.deepcopy(event_persister)
-            print("Event Queue:")
-            print(event_persister)
+            # print("Event Queue:")
+            # print(event_persister)
             if event_persister_copy:
-                print("Event present in queue")
+                #print("Event present in queue")
                 event_tuple = event_persister_copy.popleft()
                 event = event_tuple[0]
                 stream_id = event_tuple[1]
                 write_token = event_tuple[2]
                 try:
-                    print("Trying to send event to platform")
+                    #print("Trying to send event to platform")
                     self.send_event_to_platform(event, stream_id, write_token)
                     event_persister.popleft()
-                    print("Event sent successfully")
-                    print(event)
+                    #print("Event sent successfully")
+                    #print(event)
                 except:
                     sleep(15)
-                    print("Event not sent due to some problem")
+                    #print("Event not sent due to some problem")
             else:
-                print("No event found in queue.. sleeping for 1 minute")
+                #print("No event found in queue.. sleeping for 1 minute")
                 sleep(30)
 
 
