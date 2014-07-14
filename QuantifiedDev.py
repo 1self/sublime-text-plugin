@@ -5,16 +5,20 @@ from time import sleep
 import json
 import copy
 import collections
+import logging
 
 try:
     import urllib.request as urllib2
 except:
     import urllib2
 
+ST_VERSION = int(sublime.version())
 QD_URL = "http://app.quantifieddev.org"
 SETTINGS = {}
 SETTINGS_FILE = "QuantifiedDev.sublime-settings"
 event_persister = collections.deque()
+stream_id = ""
+write_token = ""
 
 def plugin_loaded():
     print('Initializing QuantifiedDev plugin')
@@ -24,7 +28,13 @@ def plugin_loaded():
 
 
 def after_loaded():
+    global stream_id
+    global write_token
+
     get_stream_id_if_not_present()
+
+    stream_id = SETTINGS.get("streamId")
+    write_token = SETTINGS.get("writeToken")
 
 
 def get_stream_id_if_not_present():
@@ -58,6 +68,7 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
     inactive_session_end_time = inactive_session_start_time
     THRESHOLD_INACTIVITY_DURATION = 60
 
+
     def on_post_save(self, view):
         self.handle_event()
 
@@ -69,9 +80,9 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
 
     def sublime_activity_detector_thread(self):
         while True:
-            print(
-                "isUserActive : %s inactivityDuration : %s sec" % (
-                    self.is_user_active, self.inactivity_duration()))
+            # print(
+            #     "isUserActive : %s inactivityDuration : %s sec" % (
+            #         self.is_user_active, self.inactivity_duration()))
             if self.is_user_active:
                 if self.inactivity_duration() >= self.THRESHOLD_INACTIVITY_DURATION:
                     self.inactive_session_start_time = self.active_session_end_time
@@ -121,7 +132,6 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
         self.persist(activity_event)
 
     def create_activity_event(self, time_duration_in_millis):
-        stream_id = SETTINGS.get("streamId")
         event = {
             "dateTime": "2014-06-30T14:50:39.000Z",
             "streamid": stream_id,
@@ -147,10 +157,7 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
         return event
 
     def persist(self, event):
-        stream_id = SETTINGS.get("streamId")
-        write_token = SETTINGS.get("writeToken")
-        tuple = (event, stream_id, write_token)
-        event_persister.append(tuple)
+        event_persister.append(event)
 
     def send_events_from_queue(self):
         while True:
@@ -159,17 +166,15 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
             # print(event_persister)
             if event_persister_copy:
                 #print("Event present in queue")
-                event_tuple = event_persister_copy.popleft()
-                event = event_tuple[0]
-                stream_id = event_tuple[1]
-                write_token = event_tuple[2]
+                event = event_persister_copy.popleft()
                 try:
-                    #print("Trying to send event to platform")
-                    self.send_event_to_platform(event, stream_id, write_token)
+                    # print("Trying to send event to platform")
+                    # print(event)
+                    self.send_event_to_platform(event)
                     event_persister.popleft()
-                    #print("Event sent successfully")
-                    #print(event)
-                except:
+                    # print("Event sent successfully")
+                except Exception as e:
+                    logging.exception(e)
                     sleep(15)
                     #print("Event not sent due to some problem")
             else:
@@ -177,9 +182,10 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
                 sleep(30)
 
 
-    def send_event_to_platform(self, event, stream_id, write_token):
+    def send_event_to_platform(self, event):
         qd_url = QD_URL
-        url = "%(qd_url)s/stream/%(stream_id)s/event" % locals()
+        stream_id_local = stream_id
+        url = "%(qd_url)s/stream/%(stream_id_local)s/event" % locals()
         data = json.dumps(event)
         utf_encoded_data = data.encode('utf8')
         req = urllib2.Request(url, utf_encoded_data, {'Content-Type': 'application/json', 'Authorization': write_token})
@@ -194,3 +200,9 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
 
     def mark_user_as_inactive(self):
         self.is_user_active = False
+
+
+
+# need to call plugin_loaded because only ST3 will auto-call it
+if ST_VERSION < 3000:
+    plugin_loaded()
