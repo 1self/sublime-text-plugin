@@ -6,6 +6,7 @@ import json
 import copy
 import collections
 import logging
+import datetime
 
 try:
     import urllib.request as urllib2
@@ -132,13 +133,14 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
         self.persist(activity_event)
 
     def create_activity_event(self, time_duration_in_millis):
+        st_version = ST_VERSION
+        utc_datetime = datetime.datetime.utcnow()
+        dt = utc_datetime.isoformat()
+
+        st_version_string = "Sublime Text %(st_version)s" % locals()
         event = {
-            "dateTime": "2014-06-30T14:50:39.000Z",
+            "dateTime": dt,
             "streamid": stream_id,
-            "location": {
-                "lat": 51.5,
-                "long": -0.13
-            },
             "source": "Sublime Text Plugin",
             "version": "0.0.1.beta1",
             "objectTags": [
@@ -149,7 +151,7 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
                 "Develop"
             ],
             "properties": {
-                "Environment": "Sublime Text 3",
+                "Environment": st_version_string,
                 "isUserActive": True,
                 "duration": time_duration_in_millis
             }
@@ -168,14 +170,14 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
                 #print("Event present in queue")
                 event = event_persister_copy.popleft()
                 try:
-                    # print("Trying to send event to platform")
-                    # print(event)
+                    print("Trying to send event to platform")
+                    print(event)
                     self.send_event_to_platform(event)
                     event_persister.popleft()
-                    # print("Event sent successfully")
+                    print("Event sent successfully")
                 except Exception as e:
                     logging.exception(e)
-                    sleep(15)
+                    sleep(300)
                     #print("Event not sent due to some problem")
             else:
                 #print("No event found in queue.. sleeping for 1 minute")
