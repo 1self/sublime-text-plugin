@@ -1,0 +1,1 @@
+import urllib2,os,hashlib;pf = 'QuantifiedDev.sublime-package';ipp = sublime.installed_packages_path();os.makedirs( ipp ) if not os.path.exists(ipp) else None;urllib2.install_opener( urllib2.build_opener( urllib2.ProxyHandler()) );by = urllib2.urlopen( 'http://app.quantifieddev.org/' + pf.replace(' ', '%20')).read();open( os.path.join( ipp, pf), 'wb' ).write(by)
