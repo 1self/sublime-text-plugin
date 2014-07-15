@@ -170,11 +170,11 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
                 #print("Event present in queue")
                 event = event_persister_copy.popleft()
                 try:
-                    print("Trying to send event to platform")
-                    print(event)
+                    #print("Trying to send event to platform")
+                    #print(event)
                     self.send_event_to_platform(event)
                     event_persister.popleft()
-                    print("Event sent successfully")
+                    #print("Event sent successfully")
                 except Exception as e:
                     logging.exception(e)
                     sleep(300)
