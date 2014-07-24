@@ -128,9 +128,10 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
         self.active_session_end_time = time.time()
 
     def log_event_qd(self, time_duration_in_seconds):
-        time_duration_in_millis = time_duration_in_seconds * 1000
-        activity_event = self.create_activity_event(time_duration_in_millis)
-        self.persist(activity_event)
+        if time_duration_in_seconds > 0:
+            time_duration_in_millis = time_duration_in_seconds * 1000
+            activity_event = self.create_activity_event(time_duration_in_millis)
+            self.persist(activity_event)
 
     def create_activity_event(self, time_duration_in_millis):
         st_version = ST_VERSION
