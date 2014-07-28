@@ -9,7 +9,8 @@
                 "id": "quantifieddev-settings",
                 "children":
                 [
-                 { "command": "go_to_quantified_dev_dashboard", "caption": "Go to QuantifiedDev Dashboard" }
+                    { "command": "go_to_quantified_dev_dashboard", "caption": "Go to QuantifiedDev Dashboard" },
+                    { "command": "go_to_quantified_dev_dashboard", "caption": "Register this Editor" }
                 ]
             }
         ]
