@@ -177,7 +177,6 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
                     event_persister.popleft()
                     #print("Event sent successfully")
                 except Exception as e:
-                    logging.exception(e)
                     sleep(300)
                     #print("Event not sent due to some problem")
             else:
