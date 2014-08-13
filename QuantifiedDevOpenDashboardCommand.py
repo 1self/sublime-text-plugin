@@ -1,7 +1,7 @@
 import sublime, sublime_plugin, webbrowser
 
 
-QD_URL = "http://app.quantifieddev.org"
+QD_URL = "https://app.quantifieddev.org"
 
 class GoToQuantifiedDevDashboardCommand(sublime_plugin.TextCommand):
    def run(self,edit):
