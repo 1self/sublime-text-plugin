@@ -14,7 +14,7 @@ except:
     import urllib2
 
 ST_VERSION = int(sublime.version())
-QD_URL = "http://app.quantifieddev.org"
+QD_URL = "https://app.quantifieddev.org"
 SETTINGS = {}
 SETTINGS_FILE = "QuantifiedDev.sublime-settings"
 event_persister = collections.deque()
@@ -177,8 +177,8 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
                     event_persister.popleft()
                     #print("Event sent successfully")
                 except Exception as e:
-                    sleep(300)
                     #print("Event not sent due to some problem")
+                    sleep(300)
             else:
                 #print("No event found in queue.. sleeping for 1 minute")
                 sleep(30)
