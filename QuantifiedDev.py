@@ -14,7 +14,7 @@ except:
     import urllib2
 
 ST_VERSION = int(sublime.version())
-QD_URL = "https://app.quantifieddev.org"
+QD_URL = "http://app.quantifieddev.org" # keep this http instead of https so that it works on ubuntu and other OS where https is not supported for python. "urllib.error.URLError: <urlopen error unknown url type: https>"
 SETTINGS = {}
 SETTINGS_FILE = "QuantifiedDev.sublime-settings"
 event_persister = collections.deque()
