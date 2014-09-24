@@ -94,15 +94,19 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
             # logging.debug(
             #     "isUserActive : %s inactivityDuration : %s sec" % (
             #         self.is_user_active, self.inactivity_duration()))
-            if self.is_user_active:
-                if self.inactivity_duration() >= self.THRESHOLD_INACTIVITY_DURATION:
-                    self.inactive_session_start_time = self.active_session_end_time
-                    self.log_event_qd(self.activity_duration())
-                    self.mark_user_as_inactive()
-                    # logging.debug(
-                    #     "User is inactive now isUserActive : %s and activityDuration was : %s sec" % (
-                    #         self.is_user_active, self.activity_duration()))
-            sleep(self.THRESHOLD_INACTIVITY_DURATION)
+            try:
+                if self.is_user_active:
+                    if self.inactivity_duration() >= self.THRESHOLD_INACTIVITY_DURATION:
+                        self.inactive_session_start_time = self.active_session_end_time
+                        self.log_event_qd(self.activity_duration())
+                        self.mark_user_as_inactive()
+                        # logging.debug(
+                        #     "User is inactive now isUserActive : %s and activityDuration was : %s sec" % (
+                        #         self.is_user_active, self.activity_duration()))
+                        sleep(self.THRESHOLD_INACTIVITY_DURATION)
+            except Exception as e:
+                logging.exception(e)
+                break
 
     def __init__(self):
         thread = Thread(target=self.sublime_activity_detector_thread)
