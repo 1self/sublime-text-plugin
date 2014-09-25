@@ -29,7 +29,7 @@ if not os.path.exists(QD_LOGS_DIRECTORY_PATH):
 
 LOG_FILENAME = os.path.abspath(os.path.join(os.path.expanduser("~"), ".qd", "qd_st_plugin.log"))
 
-logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
+logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,format='%(asctime)s %(levelname)s:%(message)s')
 
 def plugin_loaded():
     print('Initializing QuantifiedDev plugin')
@@ -105,7 +105,7 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
                         #         self.is_user_active, self.activity_duration()))
                         sleep(self.THRESHOLD_INACTIVITY_DURATION)
             except Exception as e:
-		logging.error("Error occured while detecting activity")
+                logging.error("Error occured while detecting activity")
                 logging.exception(e)
                 break
 
