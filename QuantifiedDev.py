@@ -105,6 +105,7 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
                         #         self.is_user_active, self.activity_duration()))
                         sleep(self.THRESHOLD_INACTIVITY_DURATION)
             except Exception as e:
+		logging.error("Error occured while detecting activity")
                 logging.exception(e)
                 break
 
@@ -195,8 +196,8 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
                     logging.exception(e)
                     sleep(300)
             else:
-                logging.debug("No event found in queue.. sleeping for 1 minute")
-                sleep(30)
+                #logging.debug("No event found in queue.. sleeping for 1 minute")
+                sleep(60)
 
 
     def send_event_to_platform(self, event):
