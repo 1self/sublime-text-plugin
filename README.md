@@ -27,9 +27,5 @@ You don't need to restart Sublime Text 3. Plugin is active now.
 1. Open Sublime Text editor
 2. Go to Tools -> QuantifiedDev -> Go to QuantifiedDev Dashboard or CTRL + SHIFT + p -> Go to QuantifiedDev Dashboard
 
-
-#### Plugin logs path
-Plugin logs are stored in "~/.qd/qd_st_plugin.log" where '~' is your machines' home folder.
-
 ### Information collected by Plugin:
 User activity in Sublime Text.

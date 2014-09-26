@@ -7,8 +7,6 @@ import copy
 import collections
 import logging
 import datetime
-import os
-import sys
 
 try:
     import urllib.request as urllib2
@@ -22,14 +20,6 @@ SETTINGS_FILE = "QuantifiedDev.sublime-settings"
 event_persister = collections.deque()
 stream_id = ""
 write_token = ""
-
-QD_LOGS_DIRECTORY_PATH = os.path.join(os.path.expanduser("~"), ".qd");
-if not os.path.exists(QD_LOGS_DIRECTORY_PATH):
-    os.makedirs(QD_LOGS_DIRECTORY_PATH)
-
-LOG_FILENAME = os.path.abspath(os.path.join(os.path.expanduser("~"), ".qd", "qd_st_plugin.log"))
-
-logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,format='%(asctime)s %(levelname)s:%(message)s')
 
 def plugin_loaded():
     print('Initializing QuantifiedDev plugin')
@@ -91,23 +81,18 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
 
     def sublime_activity_detector_thread(self):
         while True:
-            # logging.debug(
+            # print(
             #     "isUserActive : %s inactivityDuration : %s sec" % (
             #         self.is_user_active, self.inactivity_duration()))
-            try:
-                if self.is_user_active:
-                    if self.inactivity_duration() >= self.THRESHOLD_INACTIVITY_DURATION:
-                        self.inactive_session_start_time = self.active_session_end_time
-                        self.log_event_qd(self.activity_duration())
-                        self.mark_user_as_inactive()
-                        # logging.debug(
-                        #     "User is inactive now isUserActive : %s and activityDuration was : %s sec" % (
-                        #         self.is_user_active, self.activity_duration()))
-                        sleep(self.THRESHOLD_INACTIVITY_DURATION)
-            except Exception as e:
-                logging.error("Error occured while detecting activity")
-                logging.exception(e)
-                break
+            if self.is_user_active:
+                if self.inactivity_duration() >= self.THRESHOLD_INACTIVITY_DURATION:
+                    self.inactive_session_start_time = self.active_session_end_time
+                    self.log_event_qd(self.activity_duration())
+                    self.mark_user_as_inactive()
+                    # print(
+                    #     "User is inactive now isUserActive : %s and activityDuration was : %s sec" % (
+                    #         self.is_user_active, self.activity_duration()))
+            sleep(self.THRESHOLD_INACTIVITY_DURATION)
 
     def __init__(self):
         thread = Thread(target=self.sublime_activity_detector_thread)
@@ -126,7 +111,7 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
         # self.print_everything()
 
     # def print_everything(self):
-    #     logging.debug("isUserActive : %s activeDuration: %s sec" % (self.is_user_active, self.activity_duration()))
+    #     print("isUserActive : %s activeDuration: %s sec" % (self.is_user_active, self.activity_duration()))
 
     def start_counting_activity(self):
         self.active_session_start_time = time.time()
@@ -180,24 +165,23 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
     def send_events_from_queue(self):
         while True:
             event_persister_copy = copy.deepcopy(event_persister)
-            # logging.debug("Event Queue:")
-            # logging.debug(event_persister)
+            # print("Event Queue:")
+            # print(event_persister)
             if event_persister_copy:
-                logging.debug("Event present in queue")
+                #print("Event present in queue")
                 event = event_persister_copy.popleft()
                 try:
-                    logging.debug("Trying to send event to platform")
-                    logging.debug(event)
+                    #print("Trying to send event to platform")
+                    #print(event)
                     self.send_event_to_platform(event)
                     event_persister.popleft()
-                    logging.debug("Event sent successfully")
+                    #print("Event sent successfully")
                 except Exception as e:
-                    logging.debug("Event not sent due to some problem")
-                    logging.exception(e)
+                    #print("Event not sent due to some problem")
                     sleep(300)
             else:
-                #logging.debug("No event found in queue.. sleeping for 1 minute")
-                sleep(60)
+                #print("No event found in queue.. sleeping for 1 minute")
+                sleep(30)
 
 
     def send_event_to_platform(self, event):
