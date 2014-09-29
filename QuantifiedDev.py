@@ -103,7 +103,7 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
                         # logging.debug(
                         #     "User is inactive now isUserActive : %s and activityDuration was : %s sec" % (
                         #         self.is_user_active, self.activity_duration()))
-                        sleep(self.THRESHOLD_INACTIVITY_DURATION)
+                sleep(self.THRESHOLD_INACTIVITY_DURATION)
             except Exception as e:
                 logging.error("Error occured while detecting activity")
                 logging.exception(e)
