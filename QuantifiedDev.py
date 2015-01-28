@@ -18,6 +18,10 @@ except:
 ST_VERSION = int(sublime.version())
 QD_URL = "http://app.1self.co" # keep this http instead of https so that it works on ubuntu and other OS where https is not supported for python. "urllib.error.URLError: <urlopen error unknown url type: https>"
 SETTINGS = {}
+AUTHORIZAION = {
+    'app-id': 'app-id-598358b6aacda229634d443c9539662b',
+    'app-secret': 'app-secret-782411ad58934863f63545ccc180e407ffbe66cf5e9e02d31c2647ea786ead33'
+}
 SETTINGS_FILE = "QuantifiedDev.sublime-settings"
 event_persister = collections.deque()
 stream_id = ""
@@ -54,10 +58,15 @@ def get_stream_id_if_not_present():
         return True
     else:
         event = {}
-        url = QD_URL + "/stream"
+        url = QD_URL + "/v1/streams"
+        authorization = AUTHORIZAION['app-id'] + ":" + AUTHORIZAION['app-secret']
         data = json.dumps(event)
         utf_encoded_data = data.encode('utf8')
-        req = urllib2.Request(url, utf_encoded_data, {'Content-Type': 'application/json'})
+        req = urllib2.Request(url, utf_encoded_data, 
+            {
+                'Content-Type': 'application/json',
+                'Authorization': authorization
+            })
         response = urllib2.urlopen(req)
         result = response.read()
         #print(result)
@@ -199,7 +208,7 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
 
 
     def send_event_to_platform(self, event):
-        url = QD_URL + "/stream/" + stream_id + "/event"
+        url = QD_URL + "/v1/streams/" + stream_id + "/events"
         data = json.dumps(event)
         utf_encoded_data = data.encode('utf8')
         req = urllib2.Request(url, utf_encoded_data, {'Content-Type': 'application/json', 'Authorization': write_token})
