@@ -54,8 +54,7 @@ def get_stream_id_if_not_present():
         return True
     else:
         event = {}
-        qd_url = QD_URL
-        url = "%(qd_url)s/stream" % locals()
+        url = QD_URL + "/stream"
         data = json.dumps(event)
         utf_encoded_data = data.encode('utf8')
         req = urllib2.Request(url, utf_encoded_data, {'Content-Type': 'application/json'})
@@ -149,11 +148,10 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
             self.persist(activity_event)
 
     def create_activity_event(self, time_duration_in_millis):
-        st_version = ST_VERSION
         utc_datetime = datetime.datetime.utcnow()
         dt = utc_datetime.isoformat()
 
-        st_version_string = "Sublime Text %(st_version)s" % locals()
+        st_version_string = "Sublime Text " + ST_VERSION
         event = {
             "dateTime": dt,
             "streamid": stream_id,
@@ -201,9 +199,7 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
 
 
     def send_event_to_platform(self, event):
-        qd_url = QD_URL
-        stream_id_local = stream_id
-        url = "%(qd_url)s/stream/%(stream_id_local)s/event" % locals()
+        url = QD_URL + "/stream/" + stream_id + "/event"
         data = json.dumps(event)
         utf_encoded_data = data.encode('utf8')
         req = urllib2.Request(url, utf_encoded_data, {'Content-Type': 'application/json', 'Authorization': write_token})
