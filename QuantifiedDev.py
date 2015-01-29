@@ -22,7 +22,7 @@ AUTHORIZAION = {
     'app-id': 'app-id-598358b6aacda229634d443c9539662b',
     'app-secret': 'app-secret-782411ad58934863f63545ccc180e407ffbe66cf5e9e02d31c2647ea786ead33'
 }
-SETTINGS_FILE = "QuantifiedDev.sublime-settings"
+SETTINGS_FILE = "1self.sublime-settings"
 event_persister = collections.deque()
 stream_id = ""
 write_token = ""
@@ -36,7 +36,7 @@ LOG_FILENAME = os.path.abspath(os.path.join(os.path.expanduser("~"), ".qd", "qd_
 logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,format='%(asctime)s %(levelname)s:%(message)s')
 
 def plugin_loaded():
-    print('Initializing QuantifiedDev plugin')
+    print('Initializing 1self plugin')
     global SETTINGS
     SETTINGS = sublime.load_settings(SETTINGS_FILE)
     after_loaded()
@@ -79,7 +79,7 @@ def get_stream_id_if_not_present():
         sublime.save_settings(SETTINGS_FILE)
 
 
-class QuantifiedDevListener(sublime_plugin.EventListener):
+class OneSelfListener(sublime_plugin.EventListener):
     is_user_active = False
     active_session_start_time = time.time()
     active_session_end_time = active_session_start_time

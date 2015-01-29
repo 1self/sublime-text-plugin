@@ -1,3 +1,3 @@
 git stash
-zip -r QuantifiedDev.sublime-package . -x generate_package.sh *.idea* *.git*  **.pyc*  **.script*
+zip -r 1self.sublime-package . -x generate_package.sh *.idea* *.git*  **.pyc*  **.script*
 git stash apply

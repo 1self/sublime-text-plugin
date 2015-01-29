@@ -3,10 +3,10 @@ import sublime, sublime_plugin, webbrowser
 
 QD_URL = "https://app.1self.co"
 
-class GoToQuantifiedDevDashboardCommand(sublime_plugin.TextCommand):
+class GoTo1selfDashboardCommand(sublime_plugin.TextCommand):
    def run(self,edit):
         SETTINGS = {}
-        SETTINGS_FILE = "QuantifiedDev.sublime-settings"
+        SETTINGS_FILE = "1self.sublime-settings"
         SETTINGS = sublime.load_settings(SETTINGS_FILE)
         stream_id = SETTINGS.get("streamId")
         read_token = SETTINGS.get("readToken")

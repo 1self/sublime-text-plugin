@@ -5,12 +5,12 @@
         "children":
         [
             {
-                "caption": "QuantifiedDev",
-                "id": "quantifieddev-settings",
+                "caption": "1Self",
+                "id": "1self-settings",
                 "children":
                 [
-                    { "command": "go_to_quantified_dev_dashboard", "caption": "Go to QuantifiedDev Dashboard" },
-                    { "command": "go_to_quantified_dev_dashboard", "caption": "Register this Editor" }
+                    { "command": "go_to1self_dashboard", "caption": "Go to 1self Dashboard" },
+                    { "command": "go_to1self_dashboard", "caption": "Register this Editor" }
                 ]
             }
         ]
