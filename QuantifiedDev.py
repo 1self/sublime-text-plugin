@@ -160,7 +160,7 @@ class QuantifiedDevListener(sublime_plugin.EventListener):
         utc_datetime = datetime.datetime.utcnow()
         dt = utc_datetime.isoformat()
 
-        st_version_string = "Sublime Text " + ST_VERSION
+        st_version_string = "Sublime Text " + str(ST_VERSION)
         event = {
             "dateTime": dt,
             "streamid": stream_id,
