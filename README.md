@@ -1,4 +1,4 @@
-#Sublime Text Plugin for QuantifiedDev
+#Sublime Text Plugin for 1self
 
 ### Overview
 
