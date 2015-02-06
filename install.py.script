@@ -1,1 +1,0 @@
-import urllib.request, os, hashlib; pf = '1self.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler()));by = urllib.request.urlopen('http://app.1self.co/' + pf.replace(' ', '%20') ).read();open(os.path.join(ipp, pf), 'wb').write(by)
