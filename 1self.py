@@ -162,7 +162,7 @@ class OneSelfListener(sublime_plugin.EventListener):
 
         st_version_string = "Sublime Text " + str(ST_VERSION)
         event = {
-            "dateTime": dt,
+            "eventDateTime": dt,
             "streamid": stream_id,
             "source": "Sublime Text Plugin",
             "version": "0.0.1.beta1",
@@ -175,7 +175,6 @@ class OneSelfListener(sublime_plugin.EventListener):
             ],
             "properties": {
                 "Environment": st_version_string,
-                "isUserActive": True,
                 "duration": time_duration_in_millis
             }
         }
