@@ -152,11 +152,10 @@ class OneSelfListener(sublime_plugin.EventListener):
 
     def log_event_qd(self, time_duration_in_seconds):
         if time_duration_in_seconds > 0:
-            time_duration_in_millis = time_duration_in_seconds * 1000
-            activity_event = self.create_activity_event(time_duration_in_millis)
+            activity_event = self.create_activity_event(time_duration_in_seconds)
             self.persist(activity_event)
 
-    def create_activity_event(self, time_duration_in_millis):
+    def create_activity_event(self, time_duration_in_seconds):
         utc_datetime = datetime.datetime.utcnow()
         dt = utc_datetime.isoformat()
 
@@ -174,8 +173,8 @@ class OneSelfListener(sublime_plugin.EventListener):
                 "Develop"
             ],
             "properties": {
-                "Environment": st_version_string,
-                "duration": time_duration_in_millis
+                "duration": time_duration_in_seconds,
+                "Environment": st_version_string
             }
         }
         return event
