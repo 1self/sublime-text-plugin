@@ -1,4 +1,4 @@
-
+```
 Thanks for installing the 1self Sublime Activity Tracker!	
 
 Your data is waiting for you on your 1self data dashboard.
@@ -33,6 +33,7 @@ The source is available here if you want to check it out: https://github.com/1se
 
 1self - Live Smarter
 
+
 8888888888888888888888888888888888888888
 8888888888888888888888888888888888888888
 88888888888888888DDDDD888888888888888888
@@ -58,3 +59,4 @@ The source is available here if you want to check it out: https://github.com/1se
 8888888888888888888888888888888888888888
 8888888888888888888888888888888888888888
 8888888888888888888888888888888888888888
+```
