@@ -10,7 +10,14 @@ import datetime
 import os
 import sys
 
-oneself = __import__('1self.config', globals(), locals(), [], 0) 
+ST_VERSION = int(sublime.version())
+PLUGIN_VERSION = 'v0.0.13'
+QD_URL = "http://app.1self.co" # keep this http instead of https so that it works on ubuntu and other OS where https is not supported for python. "urllib.error.URLError: <urlopen error unknown url type: https>"
+AUTHORIZAION = {
+    'app-id': 'app-id-598358b6aacda229634d443c9539662b',
+    'app-secret': 'app-secret-782411ad58934863f63545ccc180e407ffbe66cf5e9e02d31c2647ea786ead33'
+}
+SETTINGS_FILE = "1self.sublime-settings"
 
 try:
     import urllib.request as urllib2
@@ -34,15 +41,8 @@ logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,format='%(asctime)
 def plugin_loaded():
     print('Initializing 1self plugin')
     global SETTINGS
-    SETTINGS = sublime.load_settings(oneself.config.SETTINGS_FILE)
+    SETTINGS = sublime.load_settings(SETTINGS_FILE)
     VERSION = SETTINGS.get("VERSION")
-
-    print("1self path: " + str(sublime.packages_path()))
-
-    if VERSION != oneself.config.PLUGIN_VERSION:
-        focus(sublime.packages_path() + "/1self/UPDATED.md")
-        SETTINGS.set("VERSION", str(oneself.config.PLUGIN_VERSION))
-        sublime.save_settings(oneself.config.SETTINGS_FILE)
 
     after_loaded()
 
@@ -55,24 +55,6 @@ def after_loaded():
 
     stream_id = SETTINGS.get("streamId")
     write_token = SETTINGS.get("writeToken")
-    #focus('README.md')
-
-def do_focus(fn, win, cb):
-    win = sublime.active_window()
-    view = win.active_view()
-    if win is None or view is None:
-        if cb:
-            cb(False)
-    elif view.is_loading():
-        focus(fn, win=win, cb=cb)
-    else:
-        win.focus_view(view)
-        win.open_file(fn, sublime.TRANSIENT)
-        if cb:
-            cb(True)
-
-def focus(fn, win=None, timeout=500, cb=None):
-    sublime.set_timeout(lambda: do_focus(fn, win, cb), timeout)
 
 def get_stream_id_if_not_present():
 
@@ -80,8 +62,8 @@ def get_stream_id_if_not_present():
         return True
     else:
         event = {}
-        url = oneself.config.QD_URL + "/v1/streams"
-        authorization = oneself.config.AUTHORIZAION['app-id'] + ":" + oneself.config.AUTHORIZAION['app-secret']
+        url = QD_URL + "/v1/streams"
+        authorization = AUTHORIZAION['app-id'] + ":" + AUTHORIZAION['app-secret']
         data = json.dumps(event)
         utf_encoded_data = data.encode('utf8')
         req = urllib2.Request(url, utf_encoded_data, 
@@ -98,7 +80,7 @@ def get_stream_id_if_not_present():
         SETTINGS.set("streamId", str(json_result['streamid']))
         SETTINGS.set("readToken", str(json_result['readToken']))  
         SETTINGS.set("writeToken", str(json_result['writeToken']))  
-        sublime.save_settings(oneself.config.SETTINGS_FILE)
+        sublime.save_settings(SETTINGS_FILE)
 
 
 class OneSelfListener(sublime_plugin.EventListener):
@@ -181,7 +163,7 @@ class OneSelfListener(sublime_plugin.EventListener):
         utc_datetime = datetime.datetime.utcnow()
         dt = utc_datetime.isoformat()
 
-        st_version_string = "Sublime Text " + str(oneself.config.ST_VERSION)
+        st_version_string = "Sublime Text " + str(ST_VERSION)
         event = {
             "eventDateTime": dt,
             "streamid": stream_id,
@@ -228,7 +210,7 @@ class OneSelfListener(sublime_plugin.EventListener):
 
 
     def send_event_to_platform(self, event):
-        url = oneself.config.QD_URL + "/v1/streams/" + stream_id + "/events"
+        url = QD_URL + "/v1/streams/" + stream_id + "/events"
         data = json.dumps(event)
         utf_encoded_data = data.encode('utf8')
         req = urllib2.Request(url, utf_encoded_data, {'Content-Type': 'application/json', 'Authorization': write_token})
@@ -247,5 +229,5 @@ class OneSelfListener(sublime_plugin.EventListener):
 
 
 # need to call plugin_loaded because only ST3 will auto-call it
-if oneself.config.ST_VERSION < 3000:
+if ST_VERSION < 3000:
     plugin_loaded()
