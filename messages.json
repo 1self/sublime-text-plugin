@@ -1,0 +1,4 @@
+{
+	install: "messages/message.txt",
+	v0.0.10: "messages/message.txt"
+}
