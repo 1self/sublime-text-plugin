@@ -13,7 +13,7 @@ Go to 'Install Package' menu and search for '1self' and install the plugin.
 
 ### How do I see my stats
 1. Open Sublime Text editor
-2. Go to Tools -> 1self -> Go to 1self Dashboard or CTRL + SHIFT + p -> Go to 1self Dashboard
+2. Go to Tools > 1self > View Sublime Activity Data or Ctrl+1,s
 
 
 #### Plugin logs path
