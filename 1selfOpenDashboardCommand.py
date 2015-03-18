@@ -10,7 +10,9 @@ class GoTo1selfDashboardCommand(sublime_plugin.TextCommand):
         SETTINGS = sublime.load_settings(SETTINGS_FILE)
         stream_id = SETTINGS.get("streamId")
         read_token = SETTINGS.get("readToken")
+        VERSION = SETTINGS.get("VERSION")
         qd_url = QD_URL
 
-        url = "%(qd_url)s/dashboard?streamId=%(stream_id)s&readToken=%(read_token)s" % locals()
+        url = "%(qd_url)s/dashboard?streamId=%(stream_id)s&readToken=%(read_token)s&source=1selfsublime&version=%(VERSION)s" % locals()
+        print(url)
         webbrowser.open_new_tab(url)

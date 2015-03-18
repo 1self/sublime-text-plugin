@@ -43,6 +43,9 @@ def plugin_loaded():
     global SETTINGS
     SETTINGS = sublime.load_settings(SETTINGS_FILE)
     VERSION = SETTINGS.get("VERSION")
+    if(VERSION != version):
+        SETTINGS.set("VERSION", str(VERSION))
+        sublime.save_settings(SETTINGS_FILE)
 
     after_loaded()
 
