@@ -11,7 +11,7 @@ import os
 import sys
 
 ST_VERSION = int(sublime.version())
-PLUGIN_VERSION = 'v0.0.13'
+PLUGIN_VERSION = 'v0.0.11'
 QD_URL = "http://app.1self.co" # keep this http instead of https so that it works on ubuntu and other OS where https is not supported for python. "urllib.error.URLError: <urlopen error unknown url type: https>"
 AUTHORIZAION = {
     'app-id': 'app-id-598358b6aacda229634d443c9539662b',
@@ -24,7 +24,6 @@ try:
 except:
     import urllib2
 
-VERSION = ''
 
 event_persister = collections.deque()
 stream_id = ""
@@ -43,8 +42,8 @@ def plugin_loaded():
     global SETTINGS
     SETTINGS = sublime.load_settings(SETTINGS_FILE)
     VERSION = SETTINGS.get("VERSION")
-    if(VERSION != version):
-        SETTINGS.set("VERSION", str(VERSION))
+    if(VERSION != PLUGIN_VERSION):
+        SETTINGS.set("VERSION", str(PLUGIN_VERSION))
         sublime.save_settings(SETTINGS_FILE)
 
     after_loaded()
@@ -171,7 +170,7 @@ class OneSelfListener(sublime_plugin.EventListener):
             "eventDateTime": dt,
             "streamid": stream_id,
             "source": "Sublime Text Plugin",
-            "version": "0.0.1.beta1",
+            "version": PLUGIN_VERSION,
             "objectTags": [
                 "Computer",
                 "Software"

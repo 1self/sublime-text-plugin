@@ -13,6 +13,6 @@ class GoTo1selfDashboardCommand(sublime_plugin.TextCommand):
         VERSION = SETTINGS.get("VERSION")
         qd_url = QD_URL
 
-        url = "%(qd_url)s/dashboard?streamId=%(stream_id)s&readToken=%(read_token)s&source=1selfsublime&version=%(VERSION)s" % locals()
+        url = "%(qd_url)s/dashboard?streamId=%(stream_id)s&readToken=%(read_token)s&source=app-id-598358b6aacda229634d443c9539662b&version=%(VERSION)s" % locals()
         print(url)
         webbrowser.open_new_tab(url)
