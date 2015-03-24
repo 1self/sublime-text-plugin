@@ -11,6 +11,12 @@ Sublime Text Plugin tracks amount of time user is active in Sublime Text Editor.
 Make sure you have <a href="https://packagecontrol.io/">Package Control</a> installed.
 Go to 'Install Package' menu and search for '1self' and install the plugin.
 
+# Install unrealeased version
+`Ctrl+Shift+P -> "Package Control: Add Repository" -> https://github.com/1self/sublime-text-plugin`
+
+Then,
+`Ctrl+Shift+P -> "Package Control: Install Package -> sublime-text-plugin"`
+
 ### How do I see my stats
 1. Open Sublime Text editor
 2. Go to Tools > 1self > View Sublime Activity Data or Ctrl+1,s
