@@ -15,7 +15,7 @@ Go to 'Install Package' menu and search for '1self' and install the plugin.
 `Ctrl+Shift+P -> "Package Control: Add Repository" -> https://github.com/1self/sublime-text-plugin`
 
 Then,
-`Ctrl+Shift+P -> "Package Control: Install Package -> sublime-text-plugin"`
+`Ctrl+Shift+P -> "Package Control: Install Package" -> sublime-text-plugin`
 
 ### How do I see my stats
 1. Open Sublime Text editor
