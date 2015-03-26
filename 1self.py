@@ -58,6 +58,14 @@ def after_loaded():
     stream_id = SETTINGS.get("streamId")
     write_token = SETTINGS.get("writeToken")
 
+def plugin_unloaded():
+    from package_control import events
+
+    if events.pre_upgrade(package_name):
+        print('Upgrading from %s!' % events.pre_upgrade(package_name))
+    elif events.remove(package_name):
+        print('Removing %s!' % events.remove(package_name))
+
 def get_stream_id_if_not_present():
 
     if SETTINGS.get('streamId'):
@@ -233,3 +241,4 @@ class OneSelfListener(sublime_plugin.EventListener):
 # need to call plugin_loaded because only ST3 will auto-call it
 if ST_VERSION < 3000:
     plugin_loaded()
+    unload_handler = plugin_unloaded
