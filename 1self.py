@@ -9,16 +9,17 @@ import logging
 import datetime
 import os
 import sys
+import arrow
 
 ST_VERSION = int(sublime.version())
-PLUGIN_VERSION = 'v0.0.11'
+PLUGIN_VERSION = 'v0.0.12'
 QD_URL = "http://app.1self.co" # keep this http instead of https so that it works on ubuntu and other OS where https is not supported for python. "urllib.error.URLError: <urlopen error unknown url type: https>"
 AUTHORIZAION = {
     'app-id': 'app-id-598358b6aacda229634d443c9539662b',
     'app-secret': 'app-secret-782411ad58934863f63545ccc180e407ffbe66cf5e9e02d31c2647ea786ead33'
 }
 SETTINGS_FILE = "1self.sublime-settings"
-package_name = "sublime-text-plugin"
+package_name = "1Self"
 
 try:
     import urllib.request as urllib2
@@ -172,11 +173,11 @@ class OneSelfListener(sublime_plugin.EventListener):
 
     def create_activity_event(self, time_duration_in_seconds):
         utc_datetime = datetime.datetime.utcnow()
-        dt = utc_datetime.isoformat()
+        dt = arrow.now().isoformat()
 
         st_version_string = "Sublime Text " + str(ST_VERSION)
         event = {
-            "eventDateTime": dt,
+            "dateTime": dt,
             "streamid": stream_id,
             "source": "Sublime Text Plugin",
             "version": PLUGIN_VERSION,
