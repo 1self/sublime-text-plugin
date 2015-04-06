@@ -67,6 +67,46 @@ def plugin_unloaded():
         print('Upgrading from %s!' % events.pre_upgrade(package_name))
     elif events.remove(package_name):
         print('Removing %s!' % events.remove(package_name))
+        event = create_uninstall_event()
+        if event is not None:
+            send_event_to_platform(event)
+
+def send_event_to_platform(event):
+    url = QD_URL + "/v1/streams/" + stream_id + "/events"
+    data = json.dumps(event)
+    utf_encoded_data = data.encode('utf8')
+    req = urllib2.Request(url, utf_encoded_data, {'Content-Type': 'application/json', 'Authorization': write_token})
+    response = urllib2.urlopen(req)
+    result = response.read()
+    return result
+
+def create_uninstall_event():
+    if stream_id is None or len(stream_id) is 0:
+        return None
+
+    utc_datetime = datetime.datetime.utcnow()
+    dt = arrow.now().isoformat()
+
+    st_version_string = "Sublime Text " + str(ST_VERSION)
+    event = {
+        "dateTime": dt,
+        "streamid": stream_id,
+        "source": "Sublime Text Plugin",
+        "version": PLUGIN_VERSION,
+        "objectTags": [
+            "Computer",
+            "Software",
+            "Sublime"
+        ],
+        "actionTags": [
+            "Uninstall"
+        ],
+        "properties": {
+            "version": PLUGIN_VERSION,
+            "Environment": st_version_string
+        }
+    }
+    return event 
 
 def get_stream_id_if_not_present():
 
