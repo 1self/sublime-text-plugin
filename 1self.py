@@ -84,7 +84,6 @@ def create_uninstall_event():
     if stream_id is None or len(stream_id) is 0:
         return None
 
-    utc_datetime = datetime.datetime.utcnow()
     dt = arrow.now().isoformat()
 
     st_version_string = "Sublime Text " + str(ST_VERSION)
@@ -212,7 +211,6 @@ class OneSelfListener(sublime_plugin.EventListener):
             self.persist(activity_event)
 
     def create_activity_event(self, time_duration_in_seconds):
-        utc_datetime = datetime.datetime.utcnow()
         dt = arrow.now().isoformat()
 
         st_version_string = "Sublime Text " + str(ST_VERSION)
