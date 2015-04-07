@@ -11,7 +11,7 @@ import os
 import sys
 
 ST_VERSION = int(sublime.version())
-PLUGIN_VERSION = 'v0.0.12'
+PLUGIN_VERSION = 'v0.0.13'
 QD_URL = "http://app.1self.co" # keep this http instead of https so that it works on ubuntu and other OS where https is not supported for python. "urllib.error.URLError: <urlopen error unknown url type: https>"
 AUTHORIZAION = {
     'app-id': 'app-id-598358b6aacda229634d443c9539662b',
