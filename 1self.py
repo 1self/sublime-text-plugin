@@ -9,7 +9,6 @@ import logging
 import datetime
 import os
 import sys
-import arrow
 
 ST_VERSION = int(sublime.version())
 PLUGIN_VERSION = 'v0.0.12'
@@ -38,6 +37,13 @@ if not os.path.exists(QD_LOGS_DIRECTORY_PATH):
 LOG_FILENAME = os.path.abspath(os.path.join(os.path.expanduser("~"), ".qd", "qd_st_plugin.log"))
 
 logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,format='%(asctime)s %(levelname)s:%(message)s')
+
+def get_localtime_isoformat():
+    now = datetime.datetime.now()
+    utcnow = datetime.datetime.utcnow()
+    diff = now - utcnow
+    hh,mm = divmod((diff.days * 24*60*60 + diff.seconds + 30) // 60, 60)
+    return "%s%+03d:%02d" % (now.isoformat(), hh, mm)
 
 def plugin_loaded():
     print('Initializing 1self plugin')
@@ -84,7 +90,7 @@ def create_uninstall_event():
     if stream_id is None or len(stream_id) is 0:
         return None
 
-    dt = arrow.now().isoformat()
+    dt = get_localtime_isoformat()
 
     st_version_string = "Sublime Text " + str(ST_VERSION)
     event = {
@@ -211,7 +217,7 @@ class OneSelfListener(sublime_plugin.EventListener):
             self.persist(activity_event)
 
     def create_activity_event(self, time_duration_in_seconds):
-        dt = arrow.now().isoformat()
+        dt = get_localtime_isoformat()
 
         st_version_string = "Sublime Text " + str(ST_VERSION)
         event = {
