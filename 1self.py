@@ -67,6 +67,7 @@ def after_loaded():
     write_token = SETTINGS.get("writeToken")
 
 def plugin_unloaded():
+    console.log("Unloading 1self plugin")
     from package_control import events
 
     if events.pre_upgrade(package_name):
