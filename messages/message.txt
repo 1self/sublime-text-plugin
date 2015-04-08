@@ -8,10 +8,10 @@ sublime-text-plugin:
   
   Your data is waiting for you on your 1self data dashboard.
   
-  To see your data, simply click Tools > 1self > View Sublime Activity Data.
-                                 -----   -----   --------------------------
-  
-  
+  To see your data, simply hit Ctrl + 1,S or click 
+                               ----   --- 
+  Tools > 1self > View Sublime Activity Data.
+  -----   -----   ---- ------- -------- ----
   
   
 Minutes  |        █        █ 
