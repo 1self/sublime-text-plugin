@@ -19,6 +19,7 @@ AUTHORIZAION = {
 }
 SETTINGS_FILE = "1self.sublime-settings"
 package_name = "sublime-text-plugin"
+runThread = True
 
 try:
     import urllib.request as urllib2
@@ -67,7 +68,9 @@ def after_loaded():
     write_token = SETTINGS.get("writeToken")
 
 def plugin_unloaded():
-    console.log("Unloading 1self plugin")
+    print("Unloading 1self plugin")
+    runThread = False
+
     from package_control import events
 
     if events.pre_upgrade(package_name):
@@ -160,7 +163,7 @@ class OneSelfListener(sublime_plugin.EventListener):
         self.handle_event()
 
     def sublime_activity_detector_thread(self):
-        while True:
+        while runThread:
             # logging.debug(
             #     "isUserActive : %s inactivityDuration : %s sec" % (
             #         self.is_user_active, self.inactivity_duration()))
@@ -178,6 +181,7 @@ class OneSelfListener(sublime_plugin.EventListener):
                 logging.error("Error occured while detecting activity")
                 logging.exception(e)
                 break
+        print("Exiting activity thread")
 
     def __init__(self):
         thread = Thread(target=self.sublime_activity_detector_thread)
@@ -244,7 +248,7 @@ class OneSelfListener(sublime_plugin.EventListener):
         event_persister.append(event)
 
     def send_events_from_queue(self):
-        while True:
+        while runThread:
             event_persister_copy = copy.deepcopy(event_persister)
             # logging.debug("Event Queue:")
             # logging.debug(event_persister)
@@ -264,6 +268,8 @@ class OneSelfListener(sublime_plugin.EventListener):
             else:
                 #logging.debug("No event found in queue.. sleeping for 1 minute")
                 sleep(60)
+        print("Exiting events thread")
+        return False
 
 
     def send_event_to_platform(self, event):
