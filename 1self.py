@@ -18,7 +18,7 @@ AUTHORIZAION = {
     'app-secret': 'app-secret-782411ad58934863f63545ccc180e407ffbe66cf5e9e02d31c2647ea786ead33'
 }
 SETTINGS_FILE = "1self.sublime-settings"
-package_name = "1Self"
+package_name = "sublime-text-plugin"
 
 try:
     import urllib.request as urllib2
