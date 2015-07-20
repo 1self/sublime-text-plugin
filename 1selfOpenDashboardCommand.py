@@ -6,7 +6,7 @@ QD_URL = "http://www.1self.co"
 class GoTo1selfDashboardCommand(sublime_plugin.TextCommand):
    def run(self,edit):
         SETTINGS = {}
-        SETTINGS_FILE = "1self.sublime-settings"
+        SETTINGS_FILE = "1selfdev.sublime-settings"
         SETTINGS = sublime.load_settings(SETTINGS_FILE)
         stream_id = SETTINGS.get("streamId")
         if stream_id is None:

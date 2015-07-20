@@ -12,13 +12,13 @@ import sys
 
 ST_VERSION = int(sublime.version())
 PLUGIN_VERSION = 'v0.0.17'
-QD_URL = "http://app.1self.co" # keep this http instead of https so that it works on ubuntu and other OS where https is not supported for python. "urllib.error.URLError: <urlopen error unknown url type: https>"
+QD_URL = "http://app-staging.1self.co" # keep this http instead of https so that it works on ubuntu and other OS where https is not supported for python. "urllib.error.URLError: <urlopen error unknown url type: https>"
 AUTHORIZAION = {
-    'app-id': 'app-id-598358b6aacda229634d443c9539662b',
-    'app-secret': 'app-secret-782411ad58934863f63545ccc180e407ffbe66cf5e9e02d31c2647ea786ead33'
+    'app-id': 'app-id-sublime-plugin',
+    'app-secret': 'app-secret-sublime-plugin'
 }
-SETTINGS_FILE = "1self.sublime-settings"
-package_name = "1​Self"
+SETTINGS_FILE = "1selfdev.sublime-settings"
+package_name = "1​Selfdev"
 runThread = True
 
 try:
@@ -47,7 +47,7 @@ def get_localtime_isoformat():
     return "%s%+03d:%02d" % (now.isoformat(), hh, mm)
 
 def plugin_loaded():
-    print('Initializing 1self plugin')
+    print('Initializing 1self dev plugin')
     global SETTINGS
     SETTINGS = sublime.load_settings(SETTINGS_FILE)
     VERSION = SETTINGS.get("VERSION")
@@ -68,7 +68,7 @@ def after_loaded():
     write_token = SETTINGS.get("writeToken")
 
 def plugin_unloaded():
-    print("Unloading 1self plugin")
+    print("Unloading 1self dev plugin")
     runThread = False
 
     from package_control import events

@@ -1,5 +1,5 @@
 [
     { 
-        "keys": ["ctrl+1","s"], "command": "go_to1self_dashboard"
+ //       "keys": ["ctrl+1","s"], "command": "go_to1self_dashboard"
     }
 ]
